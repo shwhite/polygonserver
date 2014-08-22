@@ -5,22 +5,28 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 import dev.polygon.util.SystemDataMemory;
 import dev.polygon.util.SystemProperties;
 
 public class LoadVertexData {
 	
-	int nFlag;
-	SystemProperties conf;
+	Logger logger_ = Logger.getLogger(LoadVertexData.class);
 	
-	public LoadVertexData(int nFlag, SystemProperties conf){
-		this.nFlag = nFlag;
+	String memFlag;
+	SystemProperties conf;
+	SetVertexInMem setMem;
+	
+	public LoadVertexData(String memFlag, SystemProperties conf){
+		this.memFlag = memFlag;
 		this.conf = conf;
 	}
 	
 	
 	/*
-	 * 
+	 * Read VertexData From File
+	 * Set into Memory
 	 */
 	public int getLoadData(){
 		
@@ -29,16 +35,65 @@ public class LoadVertexData {
 			
 			String strTemp = "";
 			
+			setMem = new SetVertexInMem();
+			
+			int nCount = 0;
+			
 			while((strTemp=br.readLine())!=null){
 				String[] arrTemp = strTemp.split("\\|",-1);
 				
 				String admCode = arrTemp[0];			//행정코드
-				String Flag = arrTemp[2];					//Flag
+				String InterFlag = arrTemp[2];					//Flag
+				
+				int nMaxX = 0;
+				int nMinX = 0;
+				int nMaxY = 0;
+				int nMinY = 0;
+				
+				int nLen = (arrTemp.length-3)/2;
+				
+				int[] arrPosX = new int[nLen];
+				int[] arrPosY = new int[nLen];
+				
+				int nIdx = 0;
 				
 				for(int i=3;i<arrTemp.length;i=i+2){
+					int nX = Integer.valueOf(arrTemp[i]);
+					int nY = Integer.valueOf(arrTemp[i+1]);
 					
+					if(nMaxX<nX){ 
+						nMaxX = nX;
+					}
+					
+					if(nMinX>nX){
+						nMinX = nX;
+					}
+					
+					if(nMaxY<nY){
+						nMaxY = nY;
+					}
+					
+					if(nMinY>nY){
+						nMinY = nY;
+					}
+					
+					arrPosX[nIdx] = nX;
+					arrPosY[nIdx] = nY;
+					
+					nIdx++;
+				}	//for
+				
+				int setMemReuslt = setMem.saveVertexData(nMaxX, nMinX, nMaxY, nMinY, admCode, arrPosX, arrPosY, memFlag, InterFlag);
+				
+				if(setMemReuslt != 100){
+					logger_.error("VertexData Insert into Memory Fail! Resturn Code : "+ setMemReuslt);
 				}
-			}
+				
+				nCount++;
+				
+			} //while
+			
+			logger_.info("VertexData Insert Into Memory Done. Completed Data Cnt : " + nCount);
 			
 			br.close();
 			
