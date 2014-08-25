@@ -49,11 +49,11 @@ public class SetVertexInMem {
 		if(minIdxX.equals(maxIdxX)){
 			
 			if(SystemDataMemory.getFirstIdxMap(Flag).get(minIdxX)!=null){
-				mHash = SystemDataMemory.m_FirstIdxMapA.get(minIdxX);						
+				mHash = SystemDataMemory.getFirstIdxMap(Flag).get(minIdxX);						
 			} 
 			
 			setIndex(minIdxY, maxIdxY, m_RectangleIdx, admCode, mHash);					
-			SystemDataMemory.m_FirstIdxMapA.put(minIdxX, mHash);
+			SystemDataMemory.getFirstIdxMap(Flag).put(minIdxX, mHash);
 			
 		} else {
 			//최대 최소 값의 앞자리 두 숫자가 차이가 클때

@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import dev.polygon.util.SystemProperties;
 
 public class WorkerThread implements Runnable{
 	
@@ -11,7 +14,10 @@ public class WorkerThread implements Runnable{
 	
 	SocketChannel s;
 	
-	public WorkerThread(SocketChannel s){
+	SystemProperties conf = null;
+	
+	public WorkerThread(SocketChannel s, SystemProperties conf){
+		this.conf = conf;
 		this.s = s;
 	}
 
@@ -77,12 +83,25 @@ public class WorkerThread implements Runnable{
               //logger_.info("Query : [" + query_str + "]");
 
                 try {
-//              	task.setJSONQuery(new JSONObject(query_str));
-//                    
-//                  devTajoQueryTask qt = new devTajoQueryTask(task);
-//                  qt.run();
+                	JSONObject query = new JSONObject(query_str);
+                	TaskWorker tk = new TaskWorker(conf);          
                 	
-                	TaskWorker tk = new TaskWorker();
+                	String cmdType = query.getString("CMD");
+                	String memPlace = query.getString("MEMPLACE");
+                	String nX = query.getString("X");
+                	String nY = query.getString("Y");
+                	
+                	int nResult = 0;
+                	String m_AdmCode = "";
+                	
+                	if(cmdType.equalsIgnoreCase("SAVE_VER")){			//버택스 저장
+                		nResult = tk.InsertVertexDataIntoMemProc(memPlace);
+                	} else if(cmdType.equalsIgnoreCase("FIND_ADM")){
+                		m_AdmCode = tk.getAdmCode(Integer.valueOf(nX), Integer.valueOf(nY));
+                	}
+                	
+                	
+                	
                 	
                 	
                 } catch (Exception e) {

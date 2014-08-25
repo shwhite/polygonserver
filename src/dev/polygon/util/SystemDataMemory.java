@@ -27,6 +27,9 @@ public class SystemDataMemory {
 		public static HashMap<String, HashMap<String, HashMap<String, String>>> m_FirstIdxMapB = 
 				new HashMap<String, HashMap<String, HashMap<String, String>>>();
 		
+		
+		public static String m_DataPlace = "";
+		
 		/*
 		 * Get GeoVertexXMap
 		 */

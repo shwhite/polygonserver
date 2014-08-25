@@ -97,15 +97,21 @@ public class LoadVertexData {
 			
 			br.close();
 			
+			return 100;
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger_.error("VertexData File Not Found Error ");
+			return -101; 				//
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-generated catch block			
 			e.printStackTrace();
+			logger_.error("VertexData IO Error ");
+			return -102;
 		}
 		
-		return 100;
+		
 	}
 
 }
